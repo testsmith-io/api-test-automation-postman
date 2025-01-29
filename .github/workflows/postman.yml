@@ -1,0 +1,34 @@
+name: API Test Automation with Postman
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: 0 20 * * 6
+    
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:    
+    - name: Checkout Repository
+      uses: actions/checkout@master
+    - name: Install Node
+      uses: actions/setup-node@v1
+      with: 
+        node-version: '20'
+    - name: Install newman
+      run: |
+       npm install -g newman
+       npm install -g newman-reporter-htmlextra
+    - name: Run POSTMAN collection
+      run: |
+       newman run PracticeSoftwareTesting.postman_collection.json -r htmlextra
+    - name: Output the run Details
+      uses: actions/upload-artifact@v4
+      with: 
+       name: RunReports
+       path: newman
+
